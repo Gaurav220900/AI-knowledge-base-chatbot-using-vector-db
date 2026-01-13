@@ -1,4 +1,4 @@
-import Embedding from "./backend/models/embedding.model.js";
+import Embedding from "./models/embedding.model.js";
 import { generateEmbedding } from "./services/embedding.service.js";
 
 export async function semanticSearch(query) {
@@ -11,7 +11,7 @@ export async function semanticSearch(query) {
         path: "embedding",
         queryVector,
         numCandidates: 100,
-        limit: 2
+        limit: 1
       }
     }
   ]);
