@@ -13,8 +13,13 @@ export async function semanticSearch(query) {
         numCandidates: 100,
         limit: 1
       }
+    },
+      {
+      $project: {
+        content: 1,
+        score: { $meta: "vectorSearchScore" }
+      }
     }
   ]);
-
   return result;
 }
