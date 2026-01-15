@@ -3,16 +3,20 @@ import { semanticSearch } from "../search.js";
 import { generateAnswer } from "../services/llm.service.js";
 
 export async function chatHandler(req, res) {
+  const userId = req.user.id;
   const { question } = req.body;
 
   // 1. Store user msg
   await Chat.create({
+    userId,
     role: "user",
     text: question
   });
 
   // 2. Get last 5 messages
-  const history = await Chat.find()
+  const history = await Chat.find({
+    userId
+  })
     .sort({ createdAt: -1 })
     .limit(5)
     .lean();
@@ -47,6 +51,7 @@ ${question}
 
   // 6. Save bot msg
   await Chat.create({
+    userId,
     role: "bot",
     text: answer
   });

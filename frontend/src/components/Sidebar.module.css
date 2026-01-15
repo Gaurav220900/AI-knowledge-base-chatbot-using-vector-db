@@ -50,3 +50,67 @@
   font-size: 14px;
   font-weight: 500;
 }
+
+
+.profileBox {
+  border-top: 1px solid #222;
+  padding-top: 12px;
+}
+
+.profile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  background: #2563eb;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.name {
+  font-size: 14px;
+  margin: 0;
+}
+
+.email {
+  font-size: 11px;
+  color: #aaa;
+  margin: 0;
+}
+
+.profileBtn {
+  width: 100%;
+  background: transparent;
+  border: 1px solid #333;
+  padding: 8px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  margin-bottom: 6px;
+}
+
+.profileBtn:hover {
+  background: #1f1f1f;
+}
+
+.logoutBtn {
+  width: 100%;
+  background: #7f1d1d;
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+}
+
+.logoutBtn:hover {
+  background: #991b1b;
+}

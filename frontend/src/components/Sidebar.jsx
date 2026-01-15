@@ -32,6 +32,40 @@ export default function Sidebar({
           </div>
         ))}
       </div>
+
+      {/* BOTTOM PROFILE */}
+      <div className={styles.profileBox}>
+        <div className={styles.profile}>
+          <div className={styles.avatar}>
+            G
+          </div>
+          <div>
+            <p className={styles.name}>
+              Gaurav
+            </p>
+            <p className={styles.email}>
+              gaurav@mail.com
+            </p>
+          </div>
+        </div>
+
+        <button
+          className={styles.profileBtn}
+        >
+          ⚙ Settings
+        </button>
+
+        <button
+          className={styles.logoutBtn}
+          onClick={() => {
+            localStorage.clear();
+            window.location.href =
+              "/login";
+          }}
+        >
+          🚪 Logout
+        </button>
+      </div>
     </div>
   );
 }
