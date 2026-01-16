@@ -1,11 +1,26 @@
+import {useEffect, useState} from "react";
 import styles from "./Sidebar.module.css";
-
-export default function Sidebar({
+import {getUser} from '../services/authApi.js'
+export default  function Sidebar({
   chats,
   activeChat,
   setActiveChat,
   createChat
 }) {
+
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    async function fetchUser() {
+      const data = await getUser();
+      setUser(data);
+    }
+
+    fetchUser();
+  }, []);
+
+  const firstLetter =
+    user?.name?.charAt(0).toUpperCase();
   return (
     <div className={styles.sidebar}>
       <button
@@ -36,17 +51,18 @@ export default function Sidebar({
       {/* BOTTOM PROFILE */}
       <div className={styles.profileBox}>
         <div className={styles.profile}>
-          <div className={styles.avatar}>
-            G
-          </div>
-          <div>
-            <p className={styles.name}>
-              Gaurav
-            </p>
-            <p className={styles.email}>
-              gaurav@mail.com
-            </p>
-          </div>
+           <div className={styles.avatar}>
+              {firstLetter}
+           </div>
+
+        <div>
+          <p className={styles.name}>
+            {user?.name}
+          </p>
+          <p className={styles.email}>
+            {user?.email}
+          </p>
+        </div>
         </div>
 
         <button
