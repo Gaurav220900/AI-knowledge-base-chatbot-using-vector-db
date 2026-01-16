@@ -1,20 +1,29 @@
-import Chat from "../models/chat.model.js";
-import { semanticSearch } from "../search.js";
-import { generateAnswer } from "../services/llm.service.js";
-
-export async function chatHandler(req, res) {
+import Conversation from "../models/conversation.model.js";
+import { generateAnswer } from '../services/llm.service.js';
+import { semanticSearch } from '../search.js'
+export const chatHandler = async (req, res) => {
+  const { question, chatId } = req.body;
   const userId = req.user.id;
-  const { question } = req.body;
 
-  // 1. Store user msg
-  await Chat.create({
-    userId,
+  let convo;
+
+  if (chatId) {
+    convo = await Conversation.findById(chatId);
+  } else {
+    convo = await Conversation.create({
+      userId,
+      title: "New Chat",
+      messages: []
+    });
+  }
+
+  convo.messages.push({
     role: "user",
     text: question
   });
 
   // 2. Get last 5 messages
-  const history = await Chat.find({
+  const history = await Conversation.find({
     userId
   })
     .sort({ createdAt: -1 })
@@ -49,12 +58,93 @@ ${question}
   // 5. LLM answer
   const answer = await generateAnswer(prompt);
 
-  // 6. Save bot msg
-  await Chat.create({
-    userId,
+  convo.messages.push({
     role: "bot",
     text: answer
   });
 
-  res.json({ answer });
+  // auto title
+  if (convo.title === "New Chat") {
+    convo.title = question
+      .split(" ")
+      .slice(0, 5)
+      .join(" ");
+  }
+
+  await convo.save();
+
+  res.json({
+    answer,
+    chatId: convo._id
+  });
+};
+
+
+export const getChats = async (req, res) => {
+  const user = req.user;
+  if( !user ) {
+    return res.status(401).json({ message: "Unauthorized" });
+  } 
+
+  const chats = await Conversation.find({
+    userId: req.user.id
+  });
+
+  res.json(chats);
+}
+
+
+export const deleteChat = async (req, res) => {
+  const user = req.user;
+  if( !user ) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+
+  if(!req.params.id) {
+    return res.status(400).json({ message: "Chat ID is required" });
+  }
+   await Conversation.deleteOne({
+    _id: req.params.id,
+    userId: req.user.id
+  });
+  res.json({ success:true });
+
+}
+
+export const renameChat = async (req, res) => {
+  const user = req.user;
+  if( !user ) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  const { title } = req.body;
+  if(!title) {
+    return res.status(400).json({ message: "Title is required" });
+  } 
+  if(!req.params.id) {
+    return res.status(400).json({ message: "Chat ID is required" });
+  }
+
+  await Conversation.updateOne(
+    { _id:req.params.id, userId:req.user.id },
+    { title }
+  );
+
+  res.json({ success:true });
+}
+
+
+export const togglePinChat = async (req, res) => {
+  const user = req.user;
+  if( !user ) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  if(!req.params.id) {
+    return res.status(400).json({ message: "Chat ID is required" });
+  }
+   const chat = await Conversation.findById(req.params.id);
+
+  chat.pinned = !chat.pinned;
+  await chat.save();
+
+  res.json({ pinned: chat.pinned });
 }
