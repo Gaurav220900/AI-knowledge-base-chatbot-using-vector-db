@@ -21,5 +21,14 @@ export async function semanticSearch(query) {
       }
     }
   ]);
+
+   // 🔥 similarity threshold
+  if (
+    result.length === 0 ||
+    result[0].score < 0.6
+  ) {
+    return [];
+  }
+
   return result;
 }
