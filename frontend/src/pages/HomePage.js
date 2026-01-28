@@ -92,30 +92,39 @@ export default function HomePage() {
               <input
                 value={query}
                 onChange={e => setQuery(e.target.value)}
-                onKeyDown={e => e.key === "Enter" && handleSearch()}
+                onKeyDown={e => e.key === "Enter" && !creating && handleSearch()}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 placeholder="Ask me anything..."
                 style={styles.searchInput}
+                disabled={creating}
               />
               <button
                 onClick={handleSearch}
-                style={styles.sendButton}
-                disabled={!query.trim()}
+                style={{
+                  ...styles.sendButton,
+                  backgroundColor: creating ? '#a8a29e' : '#292524',
+                  cursor: creating ? 'not-allowed' : 'pointer'
+                }}
+                disabled={!query.trim() || creating}
               >
-                <svg 
-                  width="20" 
-                  height="20" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2"
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                >
-                  <line x1="22" y1="2" x2="11" y2="13"></line>
-                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                </svg>
+                {creating ? (
+                  <div style={styles.spinner}></div>
+                ) : (
+                  <svg 
+                    width="20" 
+                    height="20" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2"
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  >
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                  </svg>
+                )}
               </button>
             </div>
 
@@ -195,6 +204,11 @@ export default function HomePage() {
         @keyframes shimmer {
           0% { background-position: -1000px 0; }
           100% { background-position: 1000px 0; }
+        }
+
+        @keyframes spin {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
         }
       `}</style>
     </div>
@@ -385,5 +399,13 @@ const styles = {
     maxWidth: '500px',
     marginLeft: 'auto',
     marginRight: 'auto',
+  },
+  spinner: {
+    width: '16px',
+    height: '16px',
+    border: '2px solid #ffffff40',
+    borderTop: '2px solid #ffffff',
+    borderRadius: '50%',
+    animation: 'spin 1s linear infinite',
   },
 };

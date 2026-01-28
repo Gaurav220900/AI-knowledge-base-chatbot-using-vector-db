@@ -37,22 +37,16 @@ export const chatHandler = async (req, res) => {
 
   // 3. Vector search
   const docs = await semanticSearch(question);
- let context = "";
 
-if (docs.length > 0) {
-  context = docs
+
+ const context = docs
     .map(d => d.content)
     .join("\n");
-} else {
-  context = "NO_CONTEXT";
-}
+
   // 4. Prompt
   const prompt = `
-You are a smart bot that ONLY  explains answers if context is present.
+You are a smart and helpful AI assistant.
 
-If context is "NO_CONTEXT"
-say:
-"I don't have data for this question."
 
 Chat history:
 ${historyText}
@@ -60,7 +54,7 @@ ${historyText}
 Context:
 ${context}
 
-Question:
+User Question:
 ${question}
 `;
 
