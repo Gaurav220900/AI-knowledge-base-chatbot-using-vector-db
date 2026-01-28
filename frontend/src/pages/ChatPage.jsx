@@ -29,14 +29,31 @@ export default function ChatPage() {
   const sendMessage = async (text) => {
     if (!text.trim()) return;
 
+    // Add user message immediately (optimistic update)
+    setChats(prev => prev.map(chat => 
+      chat._id === chatId ? {
+        ...chat,
+        messages: [...chat.messages, { role: "user", text }]
+      } : chat
+    ));
+
     setLoading(true);
 
-    const res = await sendChat(text, chatId);
-
-    // Reload chat from DB (single source of truth)
-    await loadChats();
-
-    setLoading(false);
+    try {
+      const res = await sendChat(text, chatId);
+      
+      // Add bot response
+      setChats(prev => prev.map(chat => 
+        chat._id === chatId ? {
+          ...chat,
+          messages: [...chat.messages, { role: "bot", text: res.answer }]
+        } : chat
+      ));
+    } catch (error) {
+      console.error("Error sending message:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const activeChat = chats.find(
