@@ -112,6 +112,8 @@ export const deleteChat = async (req, res) => {
   if(!req.params.id) {
     return res.status(400).json({ message: "Chat ID is required" });
   }
+
+  console.log("Deleting chat:", req.params.id, "for user:", req.user);
    await Conversation.deleteOne({
     _id: req.params.id,
     userId: req.user.id

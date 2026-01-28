@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import styles from "./Sidebar.module.css";
+import { useNavigate } from "react-router-dom";
 import { getUser } from "../services/authApi";
 import {
   deleteChat,
@@ -10,7 +11,6 @@ import {
 export default function Sidebar({
   chats,
   activeChat,
-  setActiveChat,
   createChat,
   setChats
 }) {
@@ -21,6 +21,8 @@ export default function Sidebar({
 
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const profileRef = useRef();
+
+  const nav = useNavigate();
 
   /* CLOSE profile dropdown on outside click */
   useEffect(() => {
@@ -102,17 +104,21 @@ export default function Sidebar({
   };
 
   /* ---------------- SORT PINNED ---------------- */
-  const sortedChats = [...chats].sort(
-    (a, b) =>
-      (b.pinned ? 1 : 0) -
-      (a.pinned ? 1 : 0)
-  );
+  const sortedChats = [...chats].sort((a, b) => {
+  if (a.pinned && !b.pinned) return -1;
+  if (!a.pinned && b.pinned) return 1;
+
+  return new Date(b.createdAt) - new Date(a.createdAt);
+});
 
   return (
     <div className={styles.sidebar}>
       {/* NEW CHAT */}
       <button
-        onClick={createChat}
+        onClick={() => {
+          
+          nav(`/`);
+        }}
         className={styles.newChatBtn}
       >
         + New Chat
@@ -154,7 +160,7 @@ export default function Sidebar({
             ) : (
               <span
                 onClick={() =>
-                  setActiveChat(chat._id)
+                  nav(`/chat/${chat._id}`)
                 }
               >
                 {chat.pinned && "📌 "}

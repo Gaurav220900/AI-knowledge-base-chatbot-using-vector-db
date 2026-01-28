@@ -25,7 +25,10 @@ const conversationSchema = new mongoose.Schema({
   type: Boolean,
   default: false
   }
-});
+}, {
+    timestamps: true // <-- MAGIC
+  }
+);
 
 export default mongoose.model(
   "Conversation",

@@ -1,127 +1,66 @@
 import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import ChatWindow from "../components/ChatWindow";
 import { sendChat, fetchUserChats } from "../services/chatApi";
 
 export default function ChatPage() {
+  const { chatId } = useParams();
+  const navigate = useNavigate();
+
   const [chats, setChats] = useState([]);
-  const [activeChat, setActiveChat] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  /* ---------------- LOAD CHATS ---------------- */
+  /* LOAD ALL CHATS */
   useEffect(() => {
     loadChats();
   }, []);
 
   const loadChats = async () => {
     const res = await fetchUserChats();
-
-    // 🔥 normalize id to string
     const normalized = res.map(c => ({
       ...c,
       _id: c._id.toString()
     }));
-
     setChats(normalized);
-
-    if (normalized.length > 0) {
-      setActiveChat(normalized[0]._id);
-    }
   };
 
-  /* ---------------- CREATE CHAT ---------------- */
-  const createChat = () => {
-    const tempId = "temp-" + Date.now();
-
-    const newChat = {
-      _id: tempId,
-      title: "New Chat",
-      messages: []
-    };
-
-    setChats(prev => [newChat, ...prev]);
-    setActiveChat(tempId);
-  };
-
-  /* ---------------- SEND MESSAGE ---------------- */
+  /* SEND MESSAGE */
   const sendMessage = async (text) => {
     if (!text.trim()) return;
 
     setLoading(true);
 
-    const isTemp = activeChat.startsWith("temp-");
+    const res = await sendChat(text, chatId);
 
-    /* optimistic update */
-    setChats(prev =>
-      prev.map(chat =>
-        chat._id === activeChat
-          ? {
-              ...chat,
-              messages: [
-                ...chat.messages,
-                { role: "user", text }
-              ],
-              title:
-                chat.title === "New Chat"
-                  ? text
-                      .split(" ")
-                      .slice(0, 5)
-                      .join(" ") + "..."
-                  : chat.title
-            }
-          : chat
-      )
-    );
+    // Reload chat from DB (single source of truth)
+    await loadChats();
 
-    /* API call */
-    const res = await sendChat(
-      text,
-      isTemp ? null : activeChat
-    );
-
-    /* sync db */
-    setChats(prev =>
-      prev.map(chat =>
-        chat._id === activeChat
-          ? {
-              ...chat,
-              _id: res.chatId.toString(), // 🔥 normalize
-              messages: [
-                ...chat.messages,
-                {
-                  role: "bot",
-                  text: res.answer
-                }
-              ]
-            }
-          : chat
-      )
-    );
-
-    setActiveChat(res.chatId.toString());
     setLoading(false);
   };
 
+  const activeChat = chats.find(
+    c => c._id === chatId
+  );
+
   return (
-    <div style={styles.app}>
+    <div style={{ display: "flex", height: "100vh" }}>
       <Sidebar
         chats={chats}
-        activeChat={activeChat}
-        setActiveChat={setActiveChat}
-        createChat={createChat}
+        activeChat={chatId}
+        createChat={() => navigate("/chat")}
         setChats={setChats}
       />
 
       <ChatWindow
-        chat={chats.find(
-          c => c._id === activeChat
-        )}
+        chat={activeChat}
         sendMessage={sendMessage}
         loading={loading}
       />
     </div>
   );
 }
+
 
 const styles = {
   app: {
