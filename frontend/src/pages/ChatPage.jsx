@@ -10,11 +10,16 @@ export default function ChatPage() {
 
   const [chats, setChats] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [streamingMessageId, setStreamingMessageId] = useState(null);
 
   /* LOAD ALL CHATS */
   useEffect(() => {
     loadChats();
   }, []);
+
+  useEffect(() => {
+  setStreamingMessageId(null);
+}, [chatId]);
 
   const loadChats = async () => {
     const res = await fetchUserChats();
@@ -29,6 +34,7 @@ export default function ChatPage() {
   const sendMessage = async (text) => {
     if (!text.trim()) return;
 
+    
     // Add user message immediately (optimistic update)
     setChats(prev => prev.map(chat => 
       chat._id === chatId ? {
@@ -41,14 +47,16 @@ export default function ChatPage() {
 
     try {
       const res = await sendChat(text, chatId);
-      
+      const botMessageId = Date.now().toString();
       // Add bot response
       setChats(prev => prev.map(chat => 
         chat._id === chatId ? {
           ...chat,
-          messages: [...chat.messages, { role: "bot", text: res.answer }]
+          messages: [...chat.messages, { _id: botMessageId, role: "bot", text: res.answer }]
         } : chat
       ));
+
+      setStreamingMessageId(botMessageId);
     } catch (error) {
       console.error("Error sending message:", error);
     } finally {
@@ -73,6 +81,7 @@ export default function ChatPage() {
         chat={activeChat}
         sendMessage={sendMessage}
         loading={loading}
+        streamingMessageId={streamingMessageId}
       />
     </div>
   );

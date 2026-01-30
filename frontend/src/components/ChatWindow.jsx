@@ -4,22 +4,43 @@ import remarkGfm from "remark-gfm";
 import ChatInput from "./ChatInput";
 import styles from "./ChatWindow.module.css";
 
+function TypingMessage({ text, onDone }) {
+  const [displayed, setDisplayed] = useState("");
+
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      setDisplayed(prev => prev + text[i]);
+      i++;
+      if (i >= text.length) {
+        clearInterval(interval);
+        onDone();
+      }
+    }, 15);
+
+    return () => clearInterval(interval);
+  }, [text, onDone]);
+
+  return (
+    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+      {displayed}
+    </ReactMarkdown>
+  );
+}
+
 export default function ChatWindow({
   chat,
   sendMessage,
-  loading
+  loading,
+  streamingMessageId
 }) {
   const [text, setText] = useState("");
   const bottomRef = useRef(null);
 
-  /* auto scroll */
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({
-      behavior: "smooth"
-    });
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat?.messages, loading]);
 
-  /* EMPTY STATE */
   if (!chat) {
     return (
       <div className={styles.empty}>
@@ -36,23 +57,26 @@ export default function ChatWindow({
 
   return (
     <div className={styles.window}>
-      
-      {/* MESSAGES */}
       <div className={styles.messages}>
-        {chat.messages.map((m, i) => (
+        {chat.messages.map(m => (
           <div
-            key={i}
+            key={m._id}
             className={
               m.role === "user"
                 ? styles.userMsg
                 : styles.botMsg
             }
           >
-            <ReactMarkdown
-              remarkPlugins={[remarkGfm]}
-            >
-              {m.text}
-            </ReactMarkdown>
+            {m._id === streamingMessageId ? (
+              <TypingMessage
+                text={m.text}
+                onDone={() => {}}
+              />
+            ) : (
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {m.text}
+              </ReactMarkdown>
+            )}
           </div>
         ))}
 
@@ -67,7 +91,6 @@ export default function ChatWindow({
         <div ref={bottomRef} />
       </div>
 
-      {/* INPUT */}
       <ChatInput
         value={text}
         setValue={setText}
