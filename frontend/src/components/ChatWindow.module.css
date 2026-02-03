@@ -1,28 +1,41 @@
+/* chatWindow.module.css */
+
 .window {
   display: flex;
   flex-direction: column;
   height: 100%;
+  /* now works because parent has height: 100% */
+  width: 100%;
+  overflow: hidden;
+  /* the .messages div scrolls, not this */
 }
 
 .messages {
   flex: 1;
+  /* fills all vertical space above input */
+  min-height: 0;
+  /* ← critical: without this, flex child won't scroll */
   padding: 24px 200px;
   overflow-y: auto;
+  /* only this div scrolls */
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .userMsg {
-  width: 70%;
+  max-width: 70%;
   margin-left: auto;
   margin-bottom: 16px;
-  padding: 12px 16px;
+  width: fit-content;
+  padding: 6px 12px;
   background: #f5f5f4;
   border-radius: 12px;
-  line-height: 1.6;
+  line-height: 1.2;
   color: #1a1a1a;
 }
 
 .botMsg {
-  width: 70%;
+  max-width: 70%;
   margin-right: auto;
   margin-bottom: 16px;
   padding: 12px 16px;

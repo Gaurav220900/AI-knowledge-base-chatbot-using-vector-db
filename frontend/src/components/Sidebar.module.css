@@ -1,7 +1,7 @@
 .sidebar {
   width: 260px;
-  background: #0f0f0f;
-  color: white;
+  background: #eee;
+  color: black;
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -12,7 +12,7 @@
   border: none;
   padding: 12px;
   border-radius: 8px;
-  color: white;
+  color: rgb(245, 241, 241);
   cursor: pointer;
   font-weight: 500;
   transition: 0.2s;
@@ -39,7 +39,7 @@
 }
 
 .chatItem:hover {
-  background: #1f1f1f;
+  background: #eee
 }
 
 .activeChat {
@@ -115,10 +115,12 @@
 .logoutBtn:hover {
   background: #991b1b;
 }
+
 .chatItem,
 .activeChat {
   display: flex;
-  justify-content: space-between; /* title left, dots right */
+  justify-content: space-between;
+  /* title left, dots right */
   align-items: center;
   padding: 10px 12px;
   margin-bottom: 6px;
@@ -128,11 +130,11 @@
 }
 
 .chatItem:hover {
-  background: #1f1f1f;
+  background: #aaa;
 }
 
 .activeChat {
-  background: #2a2a2a;
+  background: #aaa;
   font-weight: 500;
 }
 
@@ -150,7 +152,7 @@
   padding: 4px 8px;
   cursor: pointer;
   font-size: 18px;
-  color: #aaa;
+  color: black;
 }
 
 .menuBtn:hover {

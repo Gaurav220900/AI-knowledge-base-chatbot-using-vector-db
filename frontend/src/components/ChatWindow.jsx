@@ -56,47 +56,49 @@ export default function ChatWindow({
   };
 
   return (
-    <div className={styles.window}>
-      <div className={styles.messages}>
-        {chat.messages.map(m => (
-          <div
-            key={m._id}
-            className={
-              m.role === "user"
-                ? styles.userMsg
-                : styles.botMsg
-            }
-          >
-            {m._id === streamingMessageId ? (
-              <TypingMessage
-                text={m.text}
-                onDone={() => {}}
-              />
-            ) : (
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {m.text}
-              </ReactMarkdown>
-            )}
-          </div>
-        ))}
+    <div style={{ flex: 1, minWidth: 0, height: "100%" }}>
+      <div className={styles.window}>
+        <div className={styles.messages}>
+          {chat.messages.map(m => (
+            <div
+              key={m._id}
+              className={
+                m.role === "user"
+                  ? styles.userMsg
+                  : styles.botMsg
+              }
+            >
+              {m._id === streamingMessageId ? (
+                <TypingMessage
+                  text={m.text}
+                  onDone={() => { }}
+                />
+              ) : (
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {m.text}
+                </ReactMarkdown>
+              )}
+            </div>
+          ))}
 
-        {loading && (
-          <div className={styles.botMsg}>
-            <span className={styles.thinking}>
-              Thinking…
-            </span>
-          </div>
-        )}
+          {loading && (
+            <div className={styles.botMsg}>
+              <span className={styles.thinking}>
+                Thinking…
+              </span>
+            </div>
+          )}
 
-        <div ref={bottomRef} />
+          <div ref={bottomRef} />
+        </div>
+
+        <ChatInput
+          value={text}
+          setValue={setText}
+          send={handleSend}
+          loading={loading}
+        />
       </div>
-
-      <ChatInput
-        value={text}
-        setValue={setText}
-        send={handleSend}
-        loading={loading}
-      />
     </div>
   );
 }
