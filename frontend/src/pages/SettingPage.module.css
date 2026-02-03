@@ -1,0 +1,106 @@
+.page {
+    padding: 40px;
+}
+
+.uploadBox {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px;
+    border-radius: 10px;
+    background: #fafaf9;
+    border: 1px solid #e7e5e4;
+}
+
+.deleteBtn {
+    background: none;
+    border: none;
+    color: #dc2626;
+    cursor: pointer;
+}
+
+.uploadSection {
+    animation: fadeInUp 0.8s ease-out 0.2s backwards;
+}
+
+.uploadCard {
+    background-color: #ffffff;
+    border-radius: 20px;
+    padding: 48px;
+    text-align: center;
+    border: 2px solid #e7e5e4;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.uploadIcon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    background-color: #fafaf9;
+    border-radius: 20px;
+    margin-bottom: 24px;
+    color: #57534e;
+    border: 2px solid #e7e5e4;
+    animation: float 3s ease-in-out infinite;
+}
+
+.uploadTitle {
+    font-size: 28px;
+    font-family: serif;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 16px 0;
+    letter-spacing: -0.02em;
+}
+
+.uploadDescription {
+    font-size: 16px;
+    color: #78716c;
+    line-height: 1.6;
+    margin: 0 0 32px 0;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}

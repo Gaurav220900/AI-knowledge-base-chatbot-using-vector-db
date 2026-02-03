@@ -76,9 +76,9 @@ export default function Sidebar({
       prev.map(c =>
         c._id === id
           ? {
-              ...c,
-              pinned: res.data.pinned
-            }
+            ...c,
+            pinned: res.data.pinned
+          }
           : c
       )
     );
@@ -105,18 +105,18 @@ export default function Sidebar({
 
   /* ---------------- SORT PINNED ---------------- */
   const sortedChats = [...chats].sort((a, b) => {
-  if (a.pinned && !b.pinned) return -1;
-  if (!a.pinned && b.pinned) return 1;
+    if (a.pinned && !b.pinned) return -1;
+    if (!a.pinned && b.pinned) return 1;
 
-  return new Date(b.createdAt) - new Date(a.createdAt);
-});
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
 
   return (
     <div className={styles.sidebar}>
       {/* NEW CHAT */}
       <button
         onClick={() => {
-          
+
           nav(`/`);
         }}
         className={styles.newChatBtn}
@@ -222,55 +222,56 @@ export default function Sidebar({
 
       {/* PROFILE */}
       {/* PROFILE */}
-<div
-  className={styles.profileBox}
-  ref={profileRef}
->
-  {/* CLICKABLE PROFILE */}
-  <div
-    className={styles.profile}
-    onClick={() =>
-      setShowProfileMenu(
-        !showProfileMenu
-      )
-    }
-  >
-    <div className={styles.avatar}>
-      {firstLetter}
-    </div>
-
-    <div>
-      <p className={styles.name}>
-        {user?.name}
-      </p>
-      <p className={styles.email}>
-        {user?.email}
-      </p>
-    </div>
-  </div>
-
-  {/* DROPDOWN */}
-  {showProfileMenu && (
-    <div className={styles.profileMenu}>
-      <button
-        className={styles.profileBtn}
+      <div
+        className={styles.profileBox}
+        ref={profileRef}
       >
-        ⚙ Settings
-      </button>
+        {/* CLICKABLE PROFILE */}
+        <div
+          className={styles.profile}
+          onClick={() =>
+            setShowProfileMenu(
+              !showProfileMenu
+            )
+          }
+        >
+          <div className={styles.avatar}>
+            {firstLetter}
+          </div>
 
-      <button
-        className={styles.logoutBtn}
-        onClick={() => {
-          localStorage.clear();
-          window.location.href =
-            "/login";
-        }}
-      >
-        🚪 Logout
-      </button>
-    </div>
-)}
-</div>
+          <div>
+            <p className={styles.name}>
+              {user?.name}
+            </p>
+            <p className={styles.email}>
+              {user?.email}
+            </p>
+          </div>
+        </div>
+
+        {/* DROPDOWN */}
+        {showProfileMenu && (
+          <div className={styles.profileMenu}>
+            <button
+              className={styles.profileBtn}
+              onClick={() => nav("/settings")}
+            >
+              ⚙ Settings
+            </button>
+
+            <button
+              className={styles.logoutBtn}
+              onClick={() => {
+                localStorage.clear();
+                window.location.href =
+                  "/login";
+              }}
+            >
+              🚪 Logout
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import {
   generateEmbedding
 } from "../services/embedding.service.js";
 import Embedding from "../models/embedding.model.js";
+import Document from "../models/document.model.js";
 import { protect } from "../middleware/auth.js";
 import express from "express";
 const router = express.Router();
@@ -24,6 +25,13 @@ router.post(
 
     const chunks = chunkText(text);
 
+    const doc = await Document.create({
+      userId: req.user.id,
+      name: req.file.originalname,
+      size: req.file.size,
+      chunkCount: chunks.length
+    });
+
     for (const chunk of chunks) {
       const vector =
         await generateEmbedding(chunk);
@@ -31,13 +39,14 @@ router.post(
       await Embedding.create({
         content: chunk,
         embedding: vector,
-        userId: req.user.id
+        userId: req.user.id,
+        documentId: doc._id
       });
     }
 
     res.json({
       success: true,
-      chunks: chunks.length
+      document: doc
     });
   }
 );

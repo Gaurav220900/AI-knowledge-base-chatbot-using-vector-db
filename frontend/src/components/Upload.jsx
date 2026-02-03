@@ -1,14 +1,14 @@
 import { useState } from "react";
 import axios from "axios";
 
-export default function Upload() {
+export default function Upload({ onUploadSuccess }) {
   const [file, setFile] = useState();
 
   const uploadPdf = async () => {
     const form = new FormData();
     form.append("file", file);
 
-    await axios.post(
+    const res = await axios.post(
       "http://localhost:5000/api/upload",
       form,
       {
@@ -21,6 +21,10 @@ export default function Upload() {
         }
       }
     );
+
+    if (onUploadSuccess) {
+      onUploadSuccess(res?.data?.document);
+    }
 
     alert("Uploaded!");
   };
